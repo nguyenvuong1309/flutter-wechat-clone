@@ -27,6 +27,25 @@ class AuthenticationProvider extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
+
+  AuthenticationProvider() {
+    // Listen for authentication state changes
+    _auth.authStateChanges().listen(_onAuthStateChanged);
+  }
+
+  Future<void> _onAuthStateChanged(User? firebaseUser) async {
+    if (firebaseUser == null) {
+      _userModel = null;
+      _uid = null;
+      _isSuccessful = false;
+    } else {
+      _isSuccessful = true;
+      _uid = firebaseUser.uid;
+      _phoneNumber = firebaseUser.phoneNumber;
+    }
+    notifyListeners();
+  }
+
   // chech authentication state
   Future<bool> checkAuthenticationState() async {
     bool isSignedIn = false;
@@ -94,6 +113,36 @@ class AuthenticationProvider extends ChangeNotifier {
     _uid = _userModel!.uid;
     notifyListeners();
   }
+
+  // sign in with email and password
+  Future<bool> signInWithEmailAndPassword({
+    required String email,
+    required String password,
+    Function? onSuccess,
+    Function? onError,
+  }) async {
+    _isLoading = true;
+    notifyListeners();
+
+    _auth
+        .signInWithEmailAndPassword(email: email, password: password)
+        .then((value) async {
+      _uid = value.user!.uid;
+      _phoneNumber = value.user!.phoneNumber;
+      _isSuccessful = true;
+      _isLoading = false;
+      if (onSuccess != null) {
+        onSuccess();
+      }
+      notifyListeners();
+      return true;
+    }).catchError((onError) {
+      onError();
+      return false;
+    });
+    return true;
+  }
+
 
   // sign in with phone number
   Future<void> signInWithPhoneNumber({

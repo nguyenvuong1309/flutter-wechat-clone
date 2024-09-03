@@ -1,30 +1,46 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:flutter/material.dart';
+import 'dart:html';
+
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
+import 'package:rxdart/rxdart.dart';
 
-import 'package:flutter_chat_pro/main.dart';
+class MockFirebaseAuth extends Mock implements FirebaseAuth{}
+class MockFirebaseUser extends Mock implements User{}
+class MockAuthResult extends Mock implements Credential {}
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  MockFirebaseAuth _auth = MockFirebaseAuth();
+  BehaviorSubject<MockFirebaseUser> _user = BehaviorSubject<MockFirebaseUser>();
+  // when(_auth.).thenAnswer((_){
+  //   return _user;
+  // });
+  UserRepository _repo = UserRepository.instance(auth: _auth);
+  group('user repository test', (){
+    when(_auth.signInWithEmailAndPassword(email: "email",password: "password")).thenAnswer((_)async{
+      _user.add(MockFirebaseUser());
+      return MockAuthResult();
+    });
+    when(_auth.signInWithEmailAndPassword(email: "mail",password: "pass")).thenThrow((){
+      return null;
+    });
+    test("sign in with email and password", () async {
+      bool signedIn = await _repo.signIn("email", "password");
+      expect(signedIn, true);
+      expect(_repo.status, Status.Authenticated);
+    });
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    test("sing in fails with incorrect email and password",() async {
+      bool signedIn = await _repo.signIn("mail", "pass");
+      expect(signedIn, false);
+      expect(_repo.status, Status.Unauthenticated);
+    });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    test('sign out', ()async{
+      await _repo.signOut();
+      expect(_repo.status, Status.Unauthenticated);
+    });
   });
 }

@@ -18,6 +18,8 @@ import 'package:flutter_chat_pro/providers/authentication_provider.dart';
 import 'package:flutter_chat_pro/providers/chat_provider.dart';
 import 'package:flutter_chat_pro/providers/group_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:flutter_chat_pro/sentry/bug_report_overlay.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,14 +27,28 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   final savedThemeMode = await AdaptiveTheme.getThemeMode();
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => AuthenticationProvider()),
-        ChangeNotifierProvider(create: (_) => ChatProvider()),
-        ChangeNotifierProvider(create: (_) => GroupProvider()),
-      ],
-      child: MyApp(savedThemeMode: savedThemeMode),
+  
+  // Initialize Sentry
+  await SentryFlutter.init(
+    (options) {
+      options.dsn =
+          'https://55b5f67d28087a4a4da2a1381872fec3@o4507876622401536.ingest.de.sentry.io/4507876709367888';
+      // Set tracesSampleRate to 1.0 to capture 100% of transactions for tracing.
+      // We recommend adjusting this value in production.
+      options.tracesSampleRate = 1.0;
+      // The sampling rate for profiling is relative to tracesSampleRate
+      // Setting to 1.0 will profile 100% of sampled transactions:
+      options.profilesSampleRate = 1.0;
+    },
+    appRunner: () => runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => AuthenticationProvider()),
+          ChangeNotifierProvider(create: (_) => ChatProvider()),
+          ChangeNotifierProvider(create: (_) => GroupProvider()),
+        ],
+        child: MyApp(savedThemeMode: savedThemeMode),
+      ),
     ),
   );
 }

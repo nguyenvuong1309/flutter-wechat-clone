@@ -6,6 +6,7 @@ import 'package:flutter_chat_pro/enums/enums.dart';
 import 'package:flutter_chat_pro/providers/authentication_provider.dart';
 import 'package:flutter_chat_pro/providers/chat_provider.dart';
 import 'package:flutter_chat_pro/providers/group_provider.dart';
+import 'package:flutter_chat_pro/sentry/bug_report_overlay.dart';
 import 'package:flutter_chat_pro/utilities/global_methods.dart';
 import 'package:flutter_chat_pro/widgets/message_reply_preview.dart';
 import 'package:flutter_sound_record/flutter_sound_record.dart';
@@ -13,6 +14,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 class BottomChatField extends StatefulWidget {
   const BottomChatField({
@@ -224,7 +226,16 @@ class _BottomChatFieldState extends State<BottomChatField> {
   }
 
   // send text message to firestore
-  void sendTextMessage() {
+  void sendTextMessage() async {
+    // try {
+    //   int result = 1 ~/ 0; // This will throw an exception
+    //   print('🚀 ~ Result: $result');
+    // } catch (exception, stackTrace) {
+    //   await Sentry.captureException(
+    //     exception,
+    //     stackTrace: stackTrace,
+    //   );
+    // }
     final currentUser = context.read<AuthenticationProvider>().userModel!;
     final chatProvider = context.read<ChatProvider>();
 
@@ -406,6 +417,15 @@ class _BottomChatFieldState extends State<BottomChatField> {
                             hintText: 'Type a message',
                           ),
                           onChanged: (value) {
+                            // FeedbackOverlay().show(context, isSent: false,
+                            //     onSubmit: () {
+                            //   FeedbackOverlay().hide();
+                            //   FeedbackOverlay()
+                            //       .show(context, isSent: true, onSubmit: () {});
+                            //   Future.delayed(const Duration(seconds: 1), () {
+                            //     FeedbackOverlay().hide();
+                            //   });
+                            // });
                             setState(() {
                               isShowSendButton = value.isNotEmpty;
                             });

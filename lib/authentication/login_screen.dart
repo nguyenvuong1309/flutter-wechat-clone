@@ -1,10 +1,12 @@
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_pro/constants.dart';
 import 'package:flutter_chat_pro/providers/authentication_provider.dart';
 import 'package:flutter_chat_pro/utilities/assets_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_chat_pro/utilities/global_methods.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -40,6 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final authProvider = context.watch<AuthenticationProvider>();
     return Scaffold(
         body: Center(
+            child: SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: 20.0,
@@ -150,9 +153,148 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
+            SignInWithEmailAndPasswordForm(onSubmit: signInWithEmailAndPassword)
           ],
         ),
       ),
-    ));
+    )));
+  }
+
+  void signInWithEmailAndPassword(String email, String password) async {
+    final authProvider =
+        Provider.of<AuthenticationProvider>(context, listen: false);
+    authProvider.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+        onSuccess: () async {
+          // 1. check if user exists in firestore
+          bool userExists = await authProvider.checkUserExists();
+
+          if (userExists) {
+            // 2. if user exists,
+
+            // * get user information from firestore
+            await authProvider.getUserDataFromFireStore();
+
+            // * save user information to provider / shared preferences
+            await authProvider.saveUserDataToSharedPreferences();
+
+            // * navigate to home screen
+            navigate(userExits: true);
+          } else {
+            // 3. if user doesn't exist, navigate to user information screen
+            navigate(userExits: false);
+          }
+        },
+        onError: () {
+          showSnackBar(context, "Login failed");
+        });
+  }
+
+  void navigate({required bool userExits}) {
+    if (userExits) {
+      showSnackBar(context, "Login success");
+      // navigate to home and remove all previous routes
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        Constants.homeScreen,
+        (route) => false,
+      );
+    } else {
+      // navigate to user information screen
+      Navigator.pushNamed(
+        context,
+        Constants.userInformationScreen,
+      );
+    }
+  }
+}
+
+class SignInWithEmailAndPasswordForm extends StatefulWidget {
+  final void Function(String email, String password)? onSubmit;
+
+  const SignInWithEmailAndPasswordForm({Key? key, this.onSubmit})
+      : super(key: key);
+
+  @override
+  _SignInFormWidgetState createState() => _SignInFormWidgetState();
+}
+
+class _SignInFormWidgetState extends State<SignInWithEmailAndPasswordForm> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  void _submitForm() {
+    if (_formKey.currentState!.validate()) {
+      if (widget.onSubmit != null) {
+        widget.onSubmit!(
+          _emailController.text,
+          _passwordController.text,
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const Center(
+              child: Text(
+                'Sign in with Google',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            TextFormField(
+              controller: _emailController,
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.emailAddress,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your email';
+                }
+                // Add more email validation logic if necessary
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _passwordController,
+              decoration: const InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(),
+              ),
+              obscureText: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your password';
+                }
+                // Add more password validation logic if necessary
+                return null;
+              },
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _submitForm,
+              child: const Center(child: Text('Sign In')),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
