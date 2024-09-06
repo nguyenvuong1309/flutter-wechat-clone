@@ -48,13 +48,14 @@ class DisplayMessageType extends StatelessWidget {
                   fit: BoxFit.cover,
                 );
         case MessageEnum.video:
-          return isReply
-              ? const Icon(Icons.video_collection)
-              : VideoPlayerWidget(
-                  videoUrl: message,
-                  color: color,
-                  viewOnly: viewOnly,
-                );
+          return const Icon(Icons.video_collection);
+        // return isReply
+        //     ? const Icon(Icons.video_collection)
+        //     : VideoPlayerWidget(
+        //         videoUrl: message,
+        //         color: color,
+        //         viewOnly: viewOnly,
+        //       );
         case MessageEnum.audio:
           return isReply
               ? const Icon(Icons.audiotrack)
