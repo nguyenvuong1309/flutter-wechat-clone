@@ -1,4 +1,4 @@
-name: "CI/CD: Android & iOS Build with Firebase Release"
+name: "Build and release to github"
 
 on:
     pull_request:
@@ -31,7 +31,7 @@ jobs:
         - name: 🚀 Install Flutter SDK
           uses: mobiledevops/flutter-sdk-action@v1.0.0
           with:
-            flutter-sdk-version: 3.19.5
+            flutter-sdk-version: 3.24.1
         
         - name: 🚀 Check flutter version.
           run: flutter --version
@@ -46,21 +46,21 @@ jobs:
         - name: 🚀 Build ios apk.
           run: flutter build apk --debug --split-per-abi
 
-        # - name: 🚀 Run build ios --no-codesign
-        #   run: |
-        #     flutter build ios --no-codesign
-        #     cd build/ios/iphoneos
-        #     mkdir Payload
-        #     cd Payload
-        #     ln -s ../Runner.app
-        #     cd ..
-        #     zip -r app.ipa Payload
-        # - name: 🚀 Push to Releases
-        #   uses: ncipollo/release-action@v1
-        #   with:
-        #     artifacts: "build/app/outputs/apk/debug/*,build/ios/iphoneos/app.ipa"
-        #     tag: v1.0.${{ github.run_number }}
-        #     token: ${{ secrets.TOKEN_GITHUB }}
+        - name: 🚀 Run build ios --no-codesign
+          run: |
+            flutter build ios --no-codesign
+            cd build/ios/iphoneos
+            mkdir Payload
+            cd Payload
+            ln -s ../Runner.app
+            cd ..
+            zip -r app.ipa Payload
+        - name: 🚀 Push to Releases
+          uses: ncipollo/release-action@v1
+          with:
+            artifacts: "build/app/outputs/apk/debug/*,build/ios/iphoneos/app.ipa"
+            tag: v1.0.${{ github.run_number }}
+            token: ${{ secrets.TOKEN_GITHUB }}
 
   
   
