@@ -33,22 +33,22 @@ jobs:
         with:
           channel: "stable"
           flutter-version: "3.24.1"
-        continue-on-error: true
 
       - name: 📋 Check Flutter Version
         run: flutter --version
-        continue-on-error: true
 
-      - name: 🚀 Check flutter version.
-        run: flutter --version
+      - name: 🔑 Decode Firebase options
+        env:
+          firebase_options_dart: ${{ secrets.FIREBASE_OPTION }}
+        run: echo "$firebase_options_dart" > lib/firebase_options.dart
 
       - name: 🚀 Install dependencies.
         run: flutter pub get
 
       - name: 🚀 Analyze project source
         run: dart analyze
-        continue-on-error: true 
-
+        continue-on-error: true
+ 
       - name: 🚀 Build ios apk.
         run: flutter build apk --debug --split-per-abi
 
