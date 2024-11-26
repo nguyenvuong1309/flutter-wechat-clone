@@ -200,9 +200,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               title: 'Logout',
                               content: 'Are you sure you want to logout?',
                               textAction: 'Logout',
-                              onActionTap: (value) {
+                              onActionTap: (value) async {
                                 if (value) {
                                   // logout
+                                  context
+                                      .read<AuthenticationProvider>()
+                                      .signOutWithGoogle();
                                   context
                                       .read<AuthenticationProvider>()
                                       .logout()

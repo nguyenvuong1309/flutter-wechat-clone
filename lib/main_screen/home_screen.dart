@@ -77,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen>
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: userImageWidget(
-                imageUrl: authProvider.userModel!.image,
+                imageUrl: authProvider.userModel?.image ?? "",
                 radius: 20,
                 onTap: () {
                   // navigate to user profile with uis as arguments

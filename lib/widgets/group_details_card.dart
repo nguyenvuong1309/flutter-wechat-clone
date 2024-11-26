@@ -22,7 +22,10 @@ class InfoDetailsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // get current user
-    final currentUser = context.read<AuthenticationProvider>().userModel!;
+    final currentUser = context.read<AuthenticationProvider>().userModel;
+    if (currentUser == null) {
+      return const SizedBox.shrink();
+    }
     // get profile image
     final profileImage = userModel != null
         ? userModel!.image

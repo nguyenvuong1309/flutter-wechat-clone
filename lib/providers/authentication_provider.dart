@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_pro/constants.dart';
 import 'package:flutter_chat_pro/models/user_model.dart';
 import 'package:flutter_chat_pro/utilities/global_methods.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthenticationProvider extends ChangeNotifier {
@@ -213,6 +214,29 @@ class AuthenticationProvider extends ChangeNotifier {
       notifyListeners();
       showSnackBar(context, e.toString());
     });
+  }
+
+  Future<void> signInWithGoogle({required Function onSuccess}) async {
+    _isLoading = true;
+    notifyListeners();
+    final userGoogle = await GoogleSignIn().signIn();
+    final googleAuth = await userGoogle?.authentication;
+    final cred = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+    final userCredential = await _auth.signInWithCredential(cred);
+    _uid = userCredential.user!.uid;
+    _phoneNumber = userCredential.user!.phoneNumber;
+    onSuccess();
+    _isSuccessful = true;
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> signOutWithGoogle() async {
+    await _auth.signOut();
+    await GoogleSignIn().signOut();
   }
 
   // save user data to firestore

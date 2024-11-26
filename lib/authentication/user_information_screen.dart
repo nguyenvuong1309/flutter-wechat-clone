@@ -206,7 +206,7 @@ class _UserInformationScreenState extends State<UserInformationScreen> {
     UserModel userModel = UserModel(
       uid: authProvider.uid!,
       name: _nameController.text.trim(),
-      phoneNumber: authProvider.phoneNumber!,
+      phoneNumber: authProvider.phoneNumber ?? "",
       image: '',
       token: '',
       aboutMe: 'Hey there, I\'m using Flutter Chat Pro',

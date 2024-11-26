@@ -23,7 +23,7 @@ class FriendWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final uid = context.watch<AuthenticationProvider>().userModel!.uid;
+    final uid = context.watch<AuthenticationProvider>().userModel?.uid;
     final name = uid == friend.uid ? 'You' : friend.name;
     bool getValue() {
       return isAdminView
