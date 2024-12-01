@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_pro/constants.dart';
 import 'package:flutter_chat_pro/models/user_model.dart';
 import 'package:flutter_chat_pro/utilities/global_methods.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -234,9 +235,31 @@ class AuthenticationProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> signInWithFacebook({required Function onSuccess}) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      final LoginResult loginResult = await FacebookAuth.instance.login();
+      final OAuthCredential facebookAuthCredential =
+          FacebookAuthProvider.credential(loginResult.accessToken!.tokenString);
+      await _auth.signInWithCredential(facebookAuthCredential);
+      onSuccess();
+    } catch (e) {
+      print("error : : $e");
+    }
+    _isSuccessful = true;
+    _isLoading = false;
+    notifyListeners();
+  }
+
   Future<void> signOutWithGoogle() async {
     await _auth.signOut();
     await GoogleSignIn().signOut();
+  }
+
+  Future<void> signOutWithFacebook() async {
+    await _auth.signOut();
+    await FacebookAuth.instance.logOut();
   }
 
   // save user data to firestore

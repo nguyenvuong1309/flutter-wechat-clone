@@ -15,4 +15,8 @@
     <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
         <item name="android:windowBackground">?android:colorBackground</item>
     </style>
+    <string name="app_name">Flutter Chat Pro</string>
+    <string name="facebook_app_id">1101698401352558</string>
+    <string name="fb_login_protocol_scheme">fb1101698401352558</string>
+    <string name="facebook_client_token">62558063d05ba5e12aa63861a8ab08dc</string>
 </resources>

@@ -322,6 +322,36 @@ class _SignInFormWidgetState extends State<SignInWithEmailAndPasswordForm> {
               },
               child: const Center(child: Text('Sign In with Google')),
             ),
+            ElevatedButton(
+              onPressed: () async {
+                final authProvider =
+                    Provider.of<AuthenticationProvider>(context, listen: false);
+                authProvider.signInWithFacebook(
+                  onSuccess: () async {
+                    // 1. check if user exists in firestore
+                    bool userExists = await authProvider.checkUserExists();
+
+                    if (userExists) {
+                      // 2. if user exists,
+
+                      // * get user information from firestore
+                      await authProvider.getUserDataFromFireStore();
+
+                      // * save user information to provider / shared preferences
+                      await authProvider.saveUserDataToSharedPreferences();
+
+                      // * navigate to home screen
+                      navigate(userExits: true);
+                    } else {
+                      // 3. if user doesn't exist, navigate to user information screen
+                      navigate(userExits: false);
+                    }
+                  },
+                );
+              },
+              child: const Center(child: Text('Sign In with Facebook')),
+            ),
+          
           ],
         ),
       ),

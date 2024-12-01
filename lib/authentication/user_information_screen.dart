@@ -204,7 +204,7 @@ class _UserInformationScreenState extends State<UserInformationScreen> {
     final authProvider = context.read<AuthenticationProvider>();
 
     UserModel userModel = UserModel(
-      uid: authProvider.uid!,
+      uid: authProvider.uid ?? "",
       name: _nameController.text.trim(),
       phoneNumber: authProvider.phoneNumber ?? "",
       image: '',

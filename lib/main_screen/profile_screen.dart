@@ -208,6 +208,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       .signOutWithGoogle();
                                   context
                                       .read<AuthenticationProvider>()
+                                      .signOutWithFacebook();
+                                  context
+                                      .read<AuthenticationProvider>()
                                       .logout()
                                       .whenComplete(() {
                                     Navigator.pop(context);
