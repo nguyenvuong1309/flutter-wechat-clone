@@ -17,6 +17,7 @@ import 'package:flutter_chat_pro/main_screen/profile_screen.dart';
 import 'package:flutter_chat_pro/providers/authentication_provider.dart';
 import 'package:flutter_chat_pro/providers/chat_provider.dart';
 import 'package:flutter_chat_pro/providers/group_provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:flutter_chat_pro/sentry/bug_report_overlay.dart';
@@ -27,7 +28,8 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   final savedThemeMode = await AdaptiveTheme.getThemeMode();
-  
+  await dotenv.load(fileName: ".env");
+
   // Initialize Sentry
   await SentryFlutter.init(
     (options) {

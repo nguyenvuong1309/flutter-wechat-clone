@@ -2,12 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This permission is to access your photo library</string>
-	<key>NSCameraUsageDescription</key>
-	<string>This permission is to access your camera to take photos</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>This permission is to access your mic to record audio</string>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -30,6 +26,16 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>This permission is to access your camera to take photos</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This permission is to access your mic to record audio</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This permission is to access your photo library</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UIBackgroundModes</key>
+	<array/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -47,9 +53,38 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
+
+	<!-- FACEBOOK CONFIG FIREBASE LOGIN-->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb1101698401352558</string>
+			</array>
+		</dict>
+	</array>
+	<key>FacebookAppID</key>
+	<string>1101698401352558</string>
+	<key>FacebookClientToken</key>
+	<string>62558063d05ba5e12aa63861a8ab08dc</string>
+	<key>FacebookDisplayName</key>
+	<string>flutter-chat-pro</string>
+	<!-- END FACEBOOK CONFIG FIREBASE LOGIN-->
+	<!-- GOOGLE CONFIG FIREBASE LOGIN-->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+			<!-- TODO Replace this value: -->
+			<!-- Copied from GoogleService-Info.plist key REVERSED_CLIENT_ID -->
+			<string>com.googleusercontent.apps.1047115318546-5sa849b8j1on3houg3u9agje85csoer5</string>
+		</array>
+		</dict>
+	</array>
+	<!-- END GOOGLE CONFIG FIREBASE LOGIN-->
 </dict>
 </plist>

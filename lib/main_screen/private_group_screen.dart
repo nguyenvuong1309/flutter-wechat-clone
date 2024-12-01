@@ -4,6 +4,8 @@ import 'package:flutter_chat_pro/constants.dart';
 import 'package:flutter_chat_pro/models/group_model.dart';
 import 'package:flutter_chat_pro/providers/authentication_provider.dart';
 import 'package:flutter_chat_pro/providers/group_provider.dart';
+import 'package:flutter_chat_pro/services/push_notification/get_server_key.dart';
+import 'package:flutter_chat_pro/services/push_notification/notification_service.dart';
 import 'package:flutter_chat_pro/widgets/chat_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -15,6 +17,22 @@ class PrivateGroupScreen extends StatefulWidget {
 }
 
 class _PrivateGroupScreenState extends State<PrivateGroupScreen> {
+  final GetServerKey _getServerKey = GetServerKey();
+  final NotificationService _notificationService = NotificationService();
+  @override
+  void initState() {
+    super.initState();
+    _notificationService.firebaseInit(context);
+    getServiceToken();
+  }
+
+  Future<void> getServiceToken() async {
+    String serverToken = await _getServerKey.getServerKeyToken();
+    print("Server Token => $serverToken");
+    String deviceToken = await _notificationService.getDeviceToken();
+    print("Device Token => $deviceToken");
+  }
+
   @override
   Widget build(BuildContext context) {
     final uid = context.read<AuthenticationProvider>().userModel!.uid;

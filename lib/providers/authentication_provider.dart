@@ -29,7 +29,6 @@ class AuthenticationProvider extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
-
   AuthenticationProvider() {
     // Listen for authentication state changes
     _auth.authStateChanges().listen(_onAuthStateChanged);
@@ -94,8 +93,13 @@ class AuthenticationProvider extends ChangeNotifier {
   Future<void> getUserDataFromFireStore() async {
     DocumentSnapshot documentSnapshot =
         await _firestore.collection(Constants.users).doc(_uid).get();
-    _userModel =
-        UserModel.fromMap(documentSnapshot.data() as Map<String, dynamic>);
+    final data = documentSnapshot.data();
+    if (data != null) {
+      _userModel = UserModel.fromMap(data as Map<String, dynamic>);
+    } else {
+      // Xử lý trường hợp dữ liệu là null
+      _userModel = null; // Hoặc một giá trị mặc định khác
+    }
     notifyListeners();
   }
 
@@ -103,7 +107,7 @@ class AuthenticationProvider extends ChangeNotifier {
   Future<void> saveUserDataToSharedPreferences() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     await sharedPreferences.setString(
-        Constants.userModel, jsonEncode(userModel!.toMap()));
+        Constants.userModel, jsonEncode(userModel?.toMap()));
   }
 
   // get data from shared preferences
@@ -144,7 +148,6 @@ class AuthenticationProvider extends ChangeNotifier {
     });
     return true;
   }
-
 
   // sign in with phone number
   Future<void> signInWithPhoneNumber({
